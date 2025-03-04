@@ -655,6 +655,8 @@ def move_time(board: chess.Board,
         return first_move_time(game), False  # No pondering after the first move since a new clock starts afterwards.
     if is_correspondence:
         return single_move_time(board, game, correspondence_move_time, setup_timer, move_overhead), can_ponder
+    if not game.opponent.is_bot:
+        return against_human_time(), can_ponder
     return game_clock_time(board, game, setup_timer, move_overhead), can_ponder
 
 
@@ -725,6 +727,9 @@ def game_clock_time(board: chess.Board,
                               white_inc=to_seconds(msec(game.state["winc"])),
                               black_inc=to_seconds(msec(game.state["binc"])),
                               clock_id="real time")
+
+def against_human_time() -> chess.engine.Limit:
+    return chess.engine.Limit(time=0.1)
 
 
 def check_for_draw_offer(game: model.Game) -> bool:
